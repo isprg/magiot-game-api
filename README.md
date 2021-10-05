@@ -19,12 +19,12 @@ $ curl http://localhost:3000/
 #### `GET` `api/v1/info`
 
 ```terminal:Shell
-$ curl http://localhost:3000/api/v1
+$ curl http://localhost:3000/api/v1/info
 
 > Magiot Game API Version 1.0
 ```
 
-## Devises
+## Devices
 
 ### 全デバイスの取得
 
