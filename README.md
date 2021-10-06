@@ -61,6 +61,29 @@ Response
 ]
 ```
 
+### デバイスの追加
+
+#### `POST` `api/v1/devices/{device_name}`
+
+Sample Code
+
+---
+
+Shell
+
+```terminal
+$ curl http://localhost:3000/api/v1/devices/sample_device
+```
+
+Response
+
+```json
+{
+  "id": 1
+  "name": "sample_device"
+}
+```
+
 ### 指定した id のデバイスの取得
 
 #### `GET` `api/v1/devices/{id}`

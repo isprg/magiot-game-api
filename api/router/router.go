@@ -24,7 +24,7 @@ func NewRouter() *echo.Echo {
 	e1.GET("", v1.Info())
 
 	e1.GET("/devices", v1.GetAllDevices())
-	// e1.POST("/devices", v1.PostDevice())
+	e1.POST("/devices/:name", v1.PostDevice())
 	e1.GET("/devices/:id", v1.GetDeviceFromID())
 	e1.DELETE("/devices/:id", v1.DeleteDeviceFromID())
 

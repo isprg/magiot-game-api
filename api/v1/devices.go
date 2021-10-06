@@ -8,8 +8,8 @@ import (
 )
 
 type Device struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID   int    `params:"id" json:"id"`
+	Name string `params:"name" json:"name"`
 }
 
 func Info() echo.HandlerFunc {
@@ -29,18 +29,16 @@ func GetAllDevices() echo.HandlerFunc {
 	}
 }
 
-// jsonに正しく変換されない問題
 func PostDevice() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		device := new(Device)
-		if err := c.Bind(device); err != nil {
-			return err
-		}
+		name := c.Param("name")
 
 		// db
 		database := db.GetConnection()
-		database.Create(&device)
+		database.Create(&Device{Name: name})
 
+		var device Device
+		database.Where("name = ?", name).Find(&device)
 		return c.JSON(http.StatusCreated, device)
 	}
 }
