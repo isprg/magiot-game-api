@@ -21,9 +21,12 @@ func NewRouter() *echo.Echo {
 
 	// API Version 1.0
 	e1 := e.Group("/api/v1")
-	e1.GET("/info", v1.Info())
-	e1.GET("/devices/:id", v1.GetDeviceFromID())
+	e1.GET("", v1.Info())
+
 	e1.GET("/devices", v1.GetAllDevices())
+	// e1.POST("/devices", v1.PostDevice())
+	e1.GET("/devices/:id", v1.GetDeviceFromID())
+	e1.DELETE("/devices/:id", v1.DeleteDeviceFromID())
 
 	// Start Server
 	return e

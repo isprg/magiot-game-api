@@ -22,10 +22,10 @@ $ curl http://localhost:3000/
 
 ## API Information
 
-#### `GET` `api/v1/info`
+#### `GET` `api/v1`
 
 ```terminal:Shell
-$ curl http://localhost:3000/api/v1/info
+$ curl http://localhost:3000/api/v1
 
 > Magiot Game API Version 1.0
 ```
@@ -82,4 +82,24 @@ Response
   "id": 1
   "name": "sample_device"
 }
+```
+
+### 指定した id のデバイスの削除
+
+#### `DELETE` `api/v1/devices/{id}`
+
+Sample Code
+
+---
+
+Shell
+
+```terminal
+$ curl -X DELETE http://localhost:3000/api/v1/devices/1
+```
+
+Response
+
+```json
+
 ```

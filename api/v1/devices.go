@@ -29,6 +29,22 @@ func GetAllDevices() echo.HandlerFunc {
 	}
 }
 
+// jsonに正しく変換されない問題
+func PostDevice() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		device := new(Device)
+		if err := c.Bind(device); err != nil {
+			return err
+		}
+
+		// db
+		database := db.GetConnection()
+		database.Create(&device)
+
+		return c.JSON(http.StatusCreated, device)
+	}
+}
+
 func GetDeviceFromID() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id := c.Param("id")
@@ -39,5 +55,18 @@ func GetDeviceFromID() echo.HandlerFunc {
 		database.Where("id = ?", id).Find(&device)
 
 		return c.JSON(http.StatusOK, device)
+	}
+}
+
+func DeleteDeviceFromID() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id := c.Param("id")
+
+		// db
+		database := db.GetConnection()
+		var device Device
+		database.Where("id = ?", id).Delete(&device)
+
+		return c.NoContent(http.StatusNoContent)
 	}
 }
