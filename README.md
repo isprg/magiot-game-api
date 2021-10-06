@@ -4,6 +4,12 @@
 
 # Get Started
 
+## DB の接続情報を書いた.env ファイルを以下の内容で準備
+
+```
+CONNECT=user:password@tcp(localhost:3306)/database_name?parseTime=true
+```
+
 ## Hello World
 
 ```terminal:Shell
