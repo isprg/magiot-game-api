@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"magiot-game-api/api/db"
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
 type Device struct {
-	ID   int    `gorm:"primary_key" param:"id" json:"id"`
-	Name string `param:"name" json:"name"`
+	ID     string `gorm:"primaryKey" json:"id"`
+	Name   string `json:"name"`
+	Target string `json:"target"`
 }
 
 func Info() echo.HandlerFunc {
@@ -33,16 +33,18 @@ func GetAllDevices() echo.HandlerFunc {
 
 func PostDevice() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		id := c.Request().Header.Get("id")
 		name := c.Request().Header.Get("name")
-		if len(name) == 0 {
+		if len(name) == 0 || len(id) == 0 {
 			apierr := APIError{
 				Code:    100,
-				Message: "invalid request - header is empty",
+				Message: "invalid request",
 			}
 			return c.JSON(http.StatusBadRequest, apierr)
 		}
 
 		device := Device{
+			ID:   id,
 			Name: name,
 		}
 
@@ -61,14 +63,30 @@ func PostDevice() echo.HandlerFunc {
 	}
 }
 
-func GetDeviceFromID() echo.HandlerFunc {
+func UpdateDeviceStatus() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		id, _ := strconv.Atoi(c.Param("id"))
+		id := c.Param("id")
+
+		newDevice := new(Device)
+		newDevice.Target = c.Request().Header.Get("target")
 
 		// db
 		database := db.GetConnection()
 		var device Device
-		database.Where("id = ?", id).Find(&device)
+		database.First(&device, id).Updates(newDevice)
+
+		return c.JSON(http.StatusOK, device)
+	}
+}
+
+func GetDeviceFromID() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id := c.Param("id")
+
+		// db
+		database := db.GetConnection()
+		var device Device
+		database.First(&device, id)
 
 		return c.JSON(http.StatusOK, device)
 	}
@@ -76,12 +94,13 @@ func GetDeviceFromID() echo.HandlerFunc {
 
 func DeleteDeviceFromID() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		id, _ := strconv.Atoi(c.Param("id"))
+		id := c.Param("id")
 
 		// db
 		database := db.GetConnection()
 		var device Device
-		database.Where("id = ?", id).Delete(&device)
+		database.First(&device, id)
+		database.Delete(device)
 
 		return c.NoContent(http.StatusNoContent)
 	}

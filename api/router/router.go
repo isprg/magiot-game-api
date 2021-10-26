@@ -1,19 +1,13 @@
 package router
 
 import (
-	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
 	v1 "magiot-game-api/api/v1"
 )
-
-func dumpHandler(c echo.Context, reqBody, resBody []byte) {
-	fmt.Fprintf(os.Stdout, "Request: %+v\n", string(reqBody))
-}
 
 func NewRouter() *echo.Echo {
 	e := echo.New() // Echo Instance
@@ -35,6 +29,7 @@ func NewRouter() *echo.Echo {
 
 	e1.GET("/devices", v1.GetAllDevices())
 	e1.POST("/devices", v1.PostDevice())
+	e1.PUT("/devices/:id", v1.UpdateDeviceStatus())
 	e1.GET("/devices/:id", v1.GetDeviceFromID())
 	e1.DELETE("/devices/:id", v1.DeleteDeviceFromID())
 
