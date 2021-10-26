@@ -1,15 +1,17 @@
 package v1
 
 import (
+	"fmt"
 	"magiot-game-api/api/db"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
 type Device struct {
-	ID   int    `params:"id" json:"id"`
-	Name string `params:"name" json:"name"`
+	ID   int    `gorm:"primary_key" param:"id" json:"id"`
+	Name string `param:"name" json:"name"`
 }
 
 func Info() echo.HandlerFunc {
@@ -31,21 +33,37 @@ func GetAllDevices() echo.HandlerFunc {
 
 func PostDevice() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		name := c.Param("name")
+		name := c.Request().Header.Get("name")
+		if len(name) == 0 {
+			apierr := APIError{
+				Code:    100,
+				Message: "invalid request - header is empty",
+			}
+			return c.JSON(http.StatusBadRequest, apierr)
+		}
+
+		device := Device{
+			Name: name,
+		}
+
+		// debug
+		for key, values := range c.Request().Header {
+			fmt.Println(key)
+			for _, value := range values {
+				fmt.Println(value)
+			}
+		}
 
 		// db
 		database := db.GetConnection()
-		database.Create(&Device{Name: name})
-
-		var device Device
-		database.Where("name = ?", name).Find(&device)
+		database.Create(&device)
 		return c.JSON(http.StatusCreated, device)
 	}
 }
 
 func GetDeviceFromID() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		id := c.Param("id")
+		id, _ := strconv.Atoi(c.Param("id"))
 
 		// db
 		database := db.GetConnection()
@@ -58,7 +76,7 @@ func GetDeviceFromID() echo.HandlerFunc {
 
 func DeleteDeviceFromID() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		id := c.Param("id")
+		id, _ := strconv.Atoi(c.Param("id"))
 
 		// db
 		database := db.GetConnection()
